@@ -77,6 +77,19 @@ export default function PaymentPage() {
 		}
 	};
 
+	function generateUPILinks(qrPayload) {
+		const params = qrPayload.replace("upi://pay?", "");
+		return {
+			universal: qrPayload,
+			phonepe: `phonepe://pay?${params}`,
+			paytm: `paytmmp://pay?${params}`,
+			gpay: `tez://upi/pay?${params}`,
+			bhim: `bhim://pay?${params}`,
+		};
+	}
+
+	const upiLinks = order ? generateUPILinks(order.qrPayload) : {};
+
 	if (loading) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-background">
@@ -241,12 +254,31 @@ export default function PaymentPage() {
 
 								{/* Manual Pay Button */}
 								<div className="space-y-6">
-									<a href={order.qrPayload} target="_blank" rel="noreferrer">
-										<Button className="w-full h-12 text-md font-bold" variant="default">
-											Pay with UPI App
-											<ExternalLink className="h-4 w-4 ml-2" />
-										</Button>
-									</a>
+									{/* App Specific Buttons */}
+									<div className="grid grid-cols-2 gap-3">
+										<a href={upiLinks.gpay} className="w-full">
+											<Button className="w-full h-12 bg-white text-black hover:bg-gray-100 border border-gray-200" variant="secondary">
+												Google Pay
+											</Button>
+										</a>
+										<a href={upiLinks.phonepe} className="w-full">
+											<Button className="w-full h-12 bg-[#5f259f] text-white hover:bg-[#4a1c7c]" variant="default">
+												PhonePe
+											</Button>
+										</a>
+										<a href={upiLinks.paytm} className="w-full">
+											<Button className="w-full h-12 bg-[#00b9f5] text-white hover:bg-[#009acb]" variant="default">
+												Paytm
+											</Button>
+										</a>
+										<a href={upiLinks.universal} className="w-full">
+											<Button className="w-full h-12 font-bold" variant="outline">
+												Other Apps
+												<ExternalLink className="h-4 w-4 ml-2" />
+											</Button>
+										</a>
+									</div>
+									
 									<p className="text-[10px] text-center text-muted-foreground font-medium uppercase tracking-[0.2em] flex items-center justify-center gap-2 mt-3">
 										<Clock className="h-3 w-3 animate-pulse text-primary" />
 										Waiting for payment confirmation
