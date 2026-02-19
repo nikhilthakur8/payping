@@ -241,7 +241,7 @@ export default function PaymentPage() {
 
 								{/* Manual Pay Button */}
 								<div className="space-y-6">
-									<a href={order.upiLink} target="_blank" rel="noreferrer">
+									<a href={order.qrPayload} target="_blank" rel="noreferrer">
 										<Button className="w-full h-12 text-md font-bold" variant="default">
 											Pay with UPI App
 											<ExternalLink className="h-4 w-4 ml-2" />
