@@ -65,7 +65,7 @@ const SectionHeader = ({ icon: Icon, title, description, badge, iconColor = "tex
 
 export default function ApiDocs() {
 	const { user } = useAppContext();
-	const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+	const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 	
 	const [openItem, setOpenItem] = useState("authentication");
 
