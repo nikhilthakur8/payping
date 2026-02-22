@@ -1,5 +1,5 @@
 import express from "express";
-import { createOrder, getOrderStatus, getPublicOrderDetails, listOrders, getOrderDetails, getDashboardStatsController } from "../controllers/orderController.js";
+import { createOrder, getOrderStatus, getPublicOrderStatus, getPublicOrderDetails, listOrders, getOrderDetails, getDashboardStatsController } from "../controllers/orderController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { validate } from "../middleware/validateMiddleware.js";
 import { createOrderDashboardSchema } from "../validations/orderSchema.js";
@@ -14,6 +14,6 @@ router.get("/:id", authMiddleware, getOrderDetails);
 
 // Public Order Routes (No Auth)
 router.get("/details/:internalRef", getPublicOrderDetails);
-router.get("/status/:internalRef", getOrderStatus);
+router.get("/status/:internalRef", getPublicOrderStatus);
 
 export default router;

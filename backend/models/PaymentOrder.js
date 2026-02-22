@@ -32,6 +32,8 @@ const orderSchema = new mongoose.Schema(
 
 		note: { type: String },
 
+		redirectUri: { type: String },
+
 		upiLink: { type: String },
 		qrPayload: { type: String },
 

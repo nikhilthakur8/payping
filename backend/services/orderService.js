@@ -22,7 +22,7 @@ const formatOrderId = (seq) => {
 };
 
 export const createOrder = async (user, orderData) => {
-	const { amount, note, clientRef } = orderData;
+	const { amount, note, clientRef, redirectUri } = orderData;
 
 	// 1. Get default provider account
 	const providerAccount = await UserProviderAccount.findOne({
@@ -64,6 +64,7 @@ export const createOrder = async (user, orderData) => {
 		clientRef: finalClientRef,
 		amount,
 		note,
+		redirectUri,
 		upiLink,
 		qrPayload,
 	});
@@ -146,7 +147,7 @@ export const checkOrderStatus = async (internalRef) => {
  * @desc Get minimal order details for public payment page
  */
 export const getPublicOrderDetails = async (internalRef) => {
-	const order = await PaymentOrder.findOne({ internalRef }).select("amount upiLink qrPayload clientRef status note utr");
+	const order = await PaymentOrder.findOne({ internalRef }).select("amount upiLink qrPayload clientRef status note utr redirectUri");
 
 	if (!order) {
 		throw new ErrorHandler("Order not found", 404);
@@ -196,6 +197,19 @@ export const getOrderById = async (user, orderId) => {
 
 	if (!order) {
 		throw new ErrorHandler("Order not found", 404);
+	}
+
+	return order;
+};
+
+/**
+ * @desc Get order details by clientRef for a specific merchant
+ */
+export const getOrderByClientRef = async (user, clientRef) => {
+	const order = await PaymentOrder.findOne({ clientRef, user: user._id });
+
+	if (!order) {
+		throw new ErrorHandler("Order not found for this client reference", 404);
 	}
 
 	return order;

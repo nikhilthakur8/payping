@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/orders", apiKeyMiddleware, validate(createOrderSchema), createOrder);
 
-// Public Order Status Check
-// router.get("/status/:internalRef", getOrderStatus);
+// Merchant Order Status Check
+router.get("/status/:clientRef", apiKeyMiddleware, getOrderStatus);
 
 export default router;

@@ -45,6 +45,26 @@ export const getPublicOrderDetails = async (req, res, next) => {
  */
 export const getOrderStatus = async (req, res, next) => {
 	try {
+		const { clientRef } = req.params;
+
+		// Find order by clientRef and user (merchant)
+		const order = await orderService.getOrderByClientRef(req.user, clientRef);
+
+		// Now check status using the internal reference
+		const status = await orderService.checkOrderStatus(order.internalRef);
+
+		res.status(200).json(status);
+	} catch (error) {
+		next(error);
+	}
+};
+
+/**
+ * @desc Check public order status (used by payment page frontend)
+ * @route GET /payment/status/:internalRef
+ */
+export const getPublicOrderStatus = async (req, res, next) => {
+	try {
 		const { internalRef } = req.params;
 		const status = await orderService.checkOrderStatus(internalRef);
 
