@@ -42,14 +42,14 @@ const CodeBlock = ({ code, language = "json" }) => {
 };
 
 const SectionHeader = ({ icon: Icon, title, description, badge, iconColor = "text-primary", iconBg = "bg-primary/10", badgeClass }) => (
-	<div className="flex items-center justify-between w-full pr-4 text-left group">
-		<div className="flex items-center gap-3">
-			<div className={cn("h-10 w-10 rounded-xl flex items-center justify-center transition-colors", iconBg, iconColor)}>
-				<Icon className="h-5 w-5" />
+	<div className="flex items-center justify-between w-full pr-4 text-left group gap-2">
+		<div className="flex items-center gap-3 min-w-0">
+			<div className={cn("h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors shrink-0", iconBg, iconColor)}>
+				<Icon className="h-4 w-4 sm:h-5 sm:w-5" />
 			</div>
-			<div>
-				<h2 className={cn("text-lg font-extrabold tracking-tight transition-colors group-hover:text-foreground/80")}>{title}</h2>
-				<p className="text-sm text-muted-foreground font-normal">{description}</p>
+			<div className="min-w-0">
+				<h2 className={cn("text-base sm:text-lg font-extrabold tracking-tight transition-colors group-hover:text-foreground/80")}>{title}</h2>
+				<p className="text-xs sm:text-sm text-muted-foreground font-normal hidden sm:block">{description}</p>
 			</div>
 		</div>
 		{badge && (
@@ -87,7 +87,7 @@ export default function ApiDocs() {
 	const sidebarLinks = [
 		{ id: "authentication", label: "Authentication", activeColor: "border-blue-500 text-blue-600" },
 		{ id: "create-order", label: "Create Order", activeColor: "border-green-500 text-green-600" },
-		// { id: "order-status", label: "Check Status" },
+		{ id: "order-status", label: "Check Status", activeColor: "border-amber-500 text-amber-600" },
 		{ id: "webhooks", label: "Webhooks", activeColor: "border-purple-500 text-purple-600" },
 	];
 
@@ -95,7 +95,7 @@ export default function ApiDocs() {
 		<div className="max-w-7xl mx-auto px-4 py-8 pb-20">
 			{/* Header */}
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold tracking-tight text-foreground">API Reference</h1>
+				<h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">API Reference</h1>
 				<p className="text-muted-foreground mt-1">
 					Build powerful payment experiences with the PayPing API. Simple, secure, and developer-friendly.
 				</p>
@@ -161,8 +161,8 @@ export default function ApiDocs() {
 							</AccordionTrigger>
 							<AccordionContent className="pb-6 pl-1 pt-2">
 								<div className="space-y-6">
-									<div className="flex items-center gap-3 p-2 px-4 rounded-xl bg-muted/40 border border-border/50 w-fit">
-										<code className="text-base font-bold text-foreground">{baseUrl}/api/orders</code>
+									<div className="flex items-center gap-3 p-2 px-4 rounded-xl bg-muted/40 border border-border/50 w-full overflow-x-auto">
+										<code className="text-sm sm:text-base font-bold text-foreground whitespace-nowrap">{baseUrl}/api/orders</code>
 									</div>
 
 									<div className="grid gap-4">
@@ -172,13 +172,14 @@ export default function ApiDocs() {
 												{ name: "amount", type: "float", required: true, desc: "Amount in INR (e.g., 50.00)" },
 												{ name: "note", type: "string", required: false, desc: "Payment purpose shown to customer" },
 												{ name: "clientRef", type: "string", required: true, desc: "Your internal reference ID (must be unique)" },
+												{ name: "redirectUri", type: "string", required: false, desc: "URL to redirect user to after payment success" },
 											].map((param) => (
-												<div key={param.name} className="flex p-4 bg-card/20 items-center justify-between">
+												<div key={param.name} className="flex flex-col sm:flex-row p-4 bg-card/20 sm:items-center justify-between gap-1 sm:gap-4">
 													<div className="flex items-center gap-3">
-														<span className="font-bold font-mono text-primary text-base">{param.name}</span>
+														<span className="font-bold font-mono text-primary text-sm sm:text-base">{param.name}</span>
 														{param.required && <span className="text-destructive font-bold text-xs uppercase px-2 py-0.5 bg-destructive/5 rounded-md">Required</span>}
 													</div>
-													<span className="text-muted-foreground text-right italic">{param.desc}</span>
+													<span className="text-muted-foreground text-xs sm:text-sm sm:text-right italic">{param.desc}</span>
 												</div>
 											))}
 										</div>
@@ -189,7 +190,7 @@ export default function ApiDocs() {
 											<Terminal className="h-5 w-5 text-muted-foreground" />
 											JSON Example
 										</h3>
-										<CodeBlock code={`// POST ${baseUrl}/api/orders\n{\n  "amount": 25.50,\n  "note": "Subscription Payment",\n  "clientRef": "INV-2024-001"\n}`} />
+										<CodeBlock code={`// POST ${baseUrl}/api/orders\n{\n  "amount": 25.50,\n  "note": "Subscription Payment",\n  "clientRef": "INV-2024-001",\n  "redirectUri": "https://yourwebsite.com/payment/success"\n}`} />
 									</div>
 
 									<div className="space-y-4">
@@ -203,24 +204,27 @@ export default function ApiDocs() {
 							</AccordionContent>
 						</AccordionItem>
 
-						{/* Order Status - Commented out */}
-						{/* <AccordionItem value="order-status" id="order-status" className="border border-border/40 rounded-xl px-4 bg-card/40 backdrop-blur-sm">
+						{/* Order Status */}
+						<AccordionItem value="order-status" id="order-status" className="border border-border/40 rounded-xl px-4 bg-card/40 backdrop-blur-sm">
 							<AccordionTrigger className="hover:no-underline py-6">
 								<SectionHeader 
 									icon={Clock} 
 									title="Check Order Status" 
 									description="Monitor the real-time status of a payment" 
 									badge="GET"
+									iconColor="text-amber-500"
+									iconBg="bg-amber-500/10"
+									badgeClass="bg-amber-500/10 text-amber-600 border-amber-500/20"
 								/>
 							</AccordionTrigger>
 							<AccordionContent className="pb-6 pl-1 pt-2">
 								<div className="space-y-6">
-									<div className="flex items-center gap-3 p-2 px-4 rounded-xl bg-muted/40 border border-border/50 w-fit">
-										<code className="text-base font-bold text-foreground">{baseUrl}/api/status/:internalRef</code>
+									<div className="flex items-center gap-3 p-2 px-4 rounded-xl bg-muted/40 border border-border/50 w-full overflow-x-auto">
+										<code className="text-sm sm:text-base font-bold text-foreground whitespace-nowrap">{baseUrl}/api/status/:clientRef</code>
 									</div>
 									
 									<p className="text-base text-muted-foreground leading-relaxed">
-										Retrieve status using the <code className="text-primary font-bold">internalRef</code> returned during order creation. This endpoint is public and can be polled safely from frontend or backend.
+										Retrieve the status using your custom <code className="text-primary font-bold">clientRef</code> provided during order creation. You must pass your <code className="text-primary font-bold">x-api-key</code> in the headers to use this endpoint.
 									</p>
 
 									<div className="space-y-3">
@@ -229,7 +233,7 @@ export default function ApiDocs() {
 									</div>
 								</div>
 							</AccordionContent>
-						</AccordionItem> */}
+						</AccordionItem>
 
 						{/* Webhooks */}
 						<AccordionItem value="webhooks" id="webhooks" className="border border-border/40 rounded-xl px-4 bg-card/40 backdrop-blur-sm">

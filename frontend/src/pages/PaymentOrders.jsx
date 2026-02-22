@@ -151,9 +151,9 @@ export default function PaymentOrders() {
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-8">
-			<div className="mb-8 flex items-center justify-between">
+			<div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 				<div>
-					<h1 className="text-3xl font-bold tracking-tight text-foreground">Payment Orders</h1>
+					<h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Payment Orders</h1>
 					<p className="text-muted-foreground mt-1">Generate and track your payment requests</p>
 				</div>
 				<div className="flex items-center gap-3">
@@ -360,7 +360,7 @@ export default function PaymentOrders() {
 
 			{/* Order Details Dialog */}
 			<Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-				<DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl">
+				<DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl max-h-[90vh] overflow-y-auto">
 					{orderDetailsLoading ? (
 						<div className="py-20 flex flex-col items-center justify-center gap-4">
 							<div className="h-8 w-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -402,7 +402,7 @@ export default function PaymentOrders() {
 
 							<div className="p-6 space-y-8">
 								{/* Transaction Info Grid */}
-								<div className="grid grid-cols-2 gap-y-6 gap-x-12">
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
 									<div className="space-y-1">
 										<p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Date & Time</p>
 										<p className="text-sm font-bold">{new Date(selectedOrder.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>
@@ -474,7 +474,7 @@ export default function PaymentOrders() {
 									</div>
 								)}
 
-								<div className="flex gap-3 pt-2">
+								<div className="flex flex-col sm:flex-row gap-3 pt-2">
 									<Button 
 										variant="outline" 
 										className="flex-1 h-12 rounded-xl text-xs font-bold uppercase tracking-widest group"
@@ -506,21 +506,21 @@ export default function PaymentOrders() {
 // Helper component for preventing duplicate code in the loop
 function CardContentWrapper({ order }) {
 	return (
-		<div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 gap-4">
-			<div className="flex items-center gap-4">
+		<div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-3 sm:gap-4">
+			<div className="flex items-center gap-3 sm:gap-4">
 				<div className={cn(
-					"h-12 w-12 rounded-full flex items-center justify-center shadow-inner transition-colors",
+					"h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shadow-inner transition-colors shrink-0",
 					order.status === 'success' ? 'bg-green-500/10 text-green-600' :
 					order.status === 'pending' ? 'bg-amber-500/10 text-amber-600' :
 					'bg-red-500/10 text-red-600'
 				)}>
-					{order.status === 'success' ? <CheckCircle2 className="h-6 w-6" /> :
-						order.status === 'pending' ? <Clock className="h-6 w-6 animate-pulse" /> :
-						<X className="h-6 w-6" />}
+					{order.status === 'success' ? <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" /> :
+						order.status === 'pending' ? <Clock className="h-5 w-5 sm:h-6 sm:w-6 animate-pulse" /> :
+						<X className="h-5 w-5 sm:h-6 sm:w-6" />}
 				</div>
-				<div>
+				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2">
-						<span className="text-lg font-bold">₹{order.amount.toFixed(2)}</span>
+						<span className="text-base sm:text-lg font-bold">₹{order.amount.toFixed(2)}</span>
 						<span className={cn(
 							"text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider",
 							order.status === 'success' ? 'bg-green-500/20 text-green-700' :
@@ -530,6 +530,9 @@ function CardContentWrapper({ order }) {
 							{order.status}
 						</span>
 					</div>
+					<p className="text-xs text-muted-foreground mt-0.5 sm:hidden">
+						{new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, {new Date(order.createdAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', hour12: true })}
+					</p>
 				</div>
 			</div>
 

@@ -59,6 +59,15 @@ export default function PaymentPage() {
 		toast.success("Copied to clipboard");
 	};
 
+	useEffect(() => {
+		if (status === "success" && order?.redirectUri) {
+			const timer = setTimeout(() => {
+				window.location.href = order.redirectUri;
+			}, 3000);
+			return () => clearTimeout(timer);
+		}
+	}, [status, order]);
+
 	const downloadQR = async () => {
 		try {
 			const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(order.qrPayload)}`;
@@ -150,14 +159,18 @@ export default function PaymentPage() {
 								<Button 
 									className="w-full h-11" 
 									onClick={() => {
-										window.close();
-										// Fallback if window.close() is blocked by the browser
-										setTimeout(() => {
-											window.location.href = "/";
-										}, 100);
+										if (order.redirectUri) {
+											window.location.href = order.redirectUri;
+										} else {
+											window.close();
+											// Fallback if window.close() is blocked by the browser
+											setTimeout(() => {
+												window.location.href = "/";
+											}, 100);
+										}
 									}}
 								>
-									Close Secure Window
+									{order.redirectUri ? "Return to Merchant" : "Close Secure Window"}
 								</Button>
 							</CardContent>
 						</Card>
@@ -228,15 +241,26 @@ export default function PaymentPage() {
 											className="w-full h-full"
 										/>
 									</div>
-									<Button 
-										variant="ghost" 
-										size="sm" 
-										onClick={downloadQR}
-										className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
-									>
-										<Copy className="h-3 w-3" />
-										Download QR Code
-									</Button>
+									
+									<div className="flex flex-col items-center gap-3 w-full max-w-[220px]">
+										<Button
+											className="w-full h-12 flex items-center justify-center gap-2 bg-[#00baf2] hover:bg-[#00a3d4] text-white rounded-xl transition-all shadow-md"
+											onClick={() => {
+												window.location.href = order.qrPayload.replace("upi://", "paytmmp://");
+											}}
+										>
+											<span className="font-extrabold text-lg tracking-wide">Paytm</span>
+										</Button>
+
+										<Button 
+											variant="ghost" 
+											onClick={downloadQR}
+											className="w-full text-xs text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-2 h-10"
+										>
+											<Copy className="h-4 w-4" />
+											Save QR
+										</Button>
+									</div>
 								</div>
 
 								{/* Waiting Indicator */}

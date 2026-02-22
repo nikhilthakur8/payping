@@ -59,12 +59,12 @@ export default function Dashboard() {
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
 			<div>
-				<h1 className="text-3xl font-bold tracking-tight">Overview</h1>
+				<h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Overview</h1>
 				<p className="text-muted-foreground">Welcome back, {user?.name}. Here's what's happening with your payments.</p>
 			</div>
 
 			{/* Stats Cards */}
-			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+			<div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
 				<Card className="border-border/40 bg-card/60 backdrop-blur-sm group hover:border-primary/40 transition-all duration-300">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground">Total Collection</CardTitle>
@@ -73,7 +73,7 @@ export default function Dashboard() {
 						</div>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold tracking-tight">₹{s.totalCollection?.toFixed(2)}</div>
+						<div className="text-xl sm:text-2xl font-bold tracking-tight">₹{s.totalCollection?.toFixed(2)}</div>
 						<p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
 							<ArrowUpRight className="h-3 w-3 text-green-500" />
 							Success transactions
@@ -89,7 +89,7 @@ export default function Dashboard() {
 						</div>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold tracking-tight">{s.successCount}</div>
+						<div className="text-xl sm:text-2xl font-bold tracking-tight">{s.successCount}</div>
 						<p className="text-[10px] text-muted-foreground mt-1 font-bold">Settled orders</p>
 					</CardContent>
 				</Card>
@@ -102,7 +102,7 @@ export default function Dashboard() {
 						</div>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold tracking-tight">{s.pendingCount}</div>
+						<div className="text-xl sm:text-2xl font-bold tracking-tight">{s.pendingCount}</div>
 						<p className="text-[10px] text-muted-foreground mt-1 font-bold">Waiting for payment</p>
 					</CardContent>
 				</Card>
@@ -115,7 +115,7 @@ export default function Dashboard() {
 						</div>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold tracking-tight">{s.failedCount}</div>
+						<div className="text-xl sm:text-2xl font-bold tracking-tight">{s.failedCount}</div>
 						<p className="text-[10px] text-muted-foreground mt-1 font-bold">Expired or cancelled</p>
 					</CardContent>
 				</Card>
@@ -133,7 +133,7 @@ export default function Dashboard() {
 							<CardDescription>Daily successful transaction volume (Last 7 Days)</CardDescription>
 						</div>
 					</CardHeader>
-					<CardContent className="h-[300px] w-full pt-4">
+					<CardContent className="h-[220px] sm:h-[300px] w-full pt-4">
 						<ResponsiveContainer width="100%" height="100%">
 							<BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
 								<CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
@@ -213,7 +213,7 @@ export default function Dashboard() {
 					<CardContent className="space-y-6 pt-2">
 						{stats?.defaultAccount ? (
 							<>
-								<div className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 border border-muted/50">
+								<div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-muted/20 border border-muted/50 gap-3">
 									<div className="flex items-center gap-4">
 										<div className="h-12 w-12 rounded-xl bg-background border border-muted/50 flex items-center justify-center p-2 overflow-hidden">
 											{stats.defaultAccount.provider?.providerPhoto ? (

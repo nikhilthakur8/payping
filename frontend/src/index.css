@@ -130,10 +130,21 @@
 	--sidebar-ring: oklch(0.556 0 0);
 }
 @layer base {
+	* {
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
 	body {
 		background-color: var(--background);
 		color: var(--foreground);
 		font-family: var(--font-sans);
+		overflow-x: hidden;
 	}
 
 	/* Remove spin buttons from number inputs */
@@ -146,5 +157,16 @@
 
 	input[type="number"] {
 		-moz-appearance: textfield;
+	}
+}
+
+/* Mobile dialog improvements */
+@media (max-width: 640px) {
+	[data-radix-popper-content-wrapper] {
+		max-width: calc(100vw - 2rem) !important;
+	}
+
+	pre {
+		font-size: 0.75rem !important;
 	}
 }

@@ -246,9 +246,9 @@ export default function Providers() {
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-8">
-			<div className="mb-8 flex items-center justify-between">
+			<div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 				<div>
-					<h1 className="text-3xl font-bold tracking-tight text-foreground">Providers</h1>
+					<h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Providers</h1>
 					<p className="text-muted-foreground mt-1">Manage your payment gateway configurations</p>
 				</div>
 				{!showAddForm && (
@@ -262,7 +262,7 @@ export default function Providers() {
 			{/* Add Provider Form */}
 			{showAddForm && (
 				<Card className="mb-8 overflow-hidden bg-card/60 backdrop-blur-sm border-muted-foreground/10">
-					<CardHeader className="flex flex-row items-center justify-between border-b border-muted/30 pb-4">
+				<CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-muted/30 pb-4 gap-3">
 						<div>
 							<CardTitle className="text-lg font-bold">
 								Add Provider Account
