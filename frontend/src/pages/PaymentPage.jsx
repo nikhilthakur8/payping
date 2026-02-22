@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, AlertCircle, Clock, Copy, ExternalLink, ShieldCheck } from "lucide-react";
+import { CheckCircle2, AlertCircle, Clock, Copy, ExternalLink, ShieldCheck, Share2, Download } from "lucide-react";
 
 export default function PaymentPage() {
 	const { internalRef } = useParams();
@@ -243,22 +243,36 @@ export default function PaymentPage() {
 									</div>
 									
 									<div className="flex flex-col items-center gap-3 w-full max-w-[220px]">
-										<Button
-											className="w-full h-12 flex items-center justify-center gap-2 bg-[#00baf2] hover:bg-[#00a3d4] text-white rounded-xl transition-all shadow-md"
-											onClick={() => {
-												window.location.href = order.qrPayload.replace("upi://", "paytmmp://");
+										<Button 
+											variant="default" 
+											onClick={async () => {
+												if (navigator.share) {
+													try {
+														await navigator.share({
+															title: 'Payment QR',
+															text: `Pay ₹${order.amount.toFixed(2)} via UPI`,
+															url: order.qrPayload
+														});
+													} catch (err) {
+														console.error("Share failed", err);
+													}
+												} else {
+													copyToClipboard(order.qrPayload);
+												}
 											}}
+											className="w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all shadow-md font-semibold"
 										>
-											<span className="font-extrabold text-lg tracking-wide">Paytm</span>
+											<Share2 className="h-4 w-4" />
+											Share QR
 										</Button>
 
 										<Button 
-											variant="ghost" 
+											variant="outline" 
 											onClick={downloadQR}
-											className="w-full text-xs text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-2 h-10"
+											className="w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all shadow-md font-semibold"
 										>
-											<Copy className="h-4 w-4" />
-											Save QR
+											<Download className="h-4 w-4" />
+											Download QR
 										</Button>
 									</div>
 								</div>
