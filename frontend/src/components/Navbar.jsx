@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import { useAppContext } from "@/context/AppContext";
 import { Moon, Sun, Monitor, Palette, LogOut, Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
 	const navigate = useNavigate();
@@ -24,82 +25,93 @@ export default function Navbar() {
 
 	return (
 		<nav className="sticky top-0 z-50 w-full border-b border-border/90 bg-background/80 backdrop-blur-sm">
-			<div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
-				<Link to="/" className="text-xl font-bold tracking-tight">
-					PayPing
-				</Link>
+			<div className={`${isDashboard ? "w-full px-0" : "mx-auto max-w-7xl px-4"} flex h-14 items-center`}>
+				<div 
+					className={cn(
+						"flex items-center h-full px-4",
+						isDashboard && "md:w-56 md:border-r border-border/40"
+					)}
+				>
+					<Link to="/" className="text-xl font-bold tracking-tight">
+						PayPing
+					</Link>
+				</div>
 
-				<div className="flex items-center gap-2">
-					{/* Theme toggle - simplified as per screenshot */}
-					<Button
-						variant="outline"
-						size="icon"
-						onClick={toggleTheme}
-						className="h-9 w-9 rounded-lg bg-background border-border/50"
-						aria-label="Toggle theme"
-					>
-						{theme === "dark" ? (
-							<Sun className="h-[1.2rem] w-[1.2rem]" />
-						) : (
-							<Moon className="h-[1.2rem] w-[1.2rem]" />
-						)}
-					</Button>
+				<div className="flex-1 flex items-center justify-between px-4">
+					<div className="flex-1" /> {/* Spacer */}
+					
+					<div className="flex items-center gap-2">
+						{/* Theme toggle - simplified as per screenshot */}
+						<Button
+							variant="outline"
+							size="icon"
+							onClick={toggleTheme}
+							className="h-9 w-9 rounded-lg bg-background border-border/50"
+							aria-label="Toggle theme"
+						>
+							{theme === "dark" ? (
+								<Sun className="h-[1.2rem] w-[1.2rem]" />
+							) : (
+								<Moon className="h-[1.2rem] w-[1.2rem]" />
+							)}
+						</Button>
 
-					{/* Desktop nav links */}
-					<div className="hidden md:flex items-center gap-2 ml-2">
-						{token ? (
-							<>
-								{!isDashboard && (
+						{/* Desktop nav links */}
+						<div className="hidden md:flex items-center gap-2 ml-2">
+							{token ? (
+								<>
+									{!isDashboard && (
+										<Button
+											variant="outline"
+											onClick={() => navigate("/dashboard")}
+											className="h-9"
+										>
+											Dashboard
+										</Button>
+									)}
+								</>
+							) : (
+								<>
 									<Button
-										variant="outline"
-										onClick={() => navigate("/dashboard")}
+										variant="ghost"
+										size="sm"
 										className="h-9"
+										onClick={() => navigate("/login")}
 									>
-										Dashboard
+										Login
 									</Button>
-								)}
-							</>
-						) : (
-							<>
-								<Button
-									variant="ghost"
-									size="sm"
-									className="h-9"
-									onClick={() => navigate("/login")}
-								>
-									Login
-								</Button>
-								<Button
-									size="sm"
-									className="h-9"
-									onClick={() => navigate("/register")}
-								>
-									Sign Up
-								</Button>
-							</>
-						)}
-					</div>
+									<Button
+										size="sm"
+										className="h-9"
+										onClick={() => navigate("/register")}
+									>
+										Sign Up
+									</Button>
+								</>
+							)}
+						</div>
 
-					{/* Mobile menu trigger / Sidebar trigger */}
-					<Button
-						variant="ghost"
-						size="icon"
-						className="md:hidden h-10 w-10 rounded-full bg-muted/50"
-						onClick={() => {
-							if (isDashboard) {
-								setSidebarOpen(!sidebarOpen);
-							} else {
-								setMobileOpen(!mobileOpen);
-							}
-						}}
-						aria-label="Toggle menu"
-					>
-						{mobileOpen || (isDashboard && sidebarOpen) ? (
-							<X className="h-5 w-5" />
-						) : (
-							<Menu className="h-5 w-5" />
-						)}
-					</Button>
+						{/* Mobile menu trigger / Sidebar trigger */}
+						<Button
+							variant="ghost"
+							size="icon"
+							className="md:hidden h-10 w-10 rounded-full bg-muted/50"
+							onClick={() => {
+								if (isDashboard) {
+									setSidebarOpen(!sidebarOpen);
+								} else {
+									setMobileOpen(!mobileOpen);
+								}
+							}}
+							aria-label="Toggle menu"
+						>
+							{mobileOpen || (isDashboard && sidebarOpen) ? (
+								<X className="h-5 w-5" />
+							) : (
+								<Menu className="h-5 w-5" />
+							)}
+						</Button>
+					</div>
 				</div>
 			</div>
 
