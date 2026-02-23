@@ -57,14 +57,14 @@ export default function Dashboard() {
 	const { stats: s, chartData, defaultAccount } = stats || { stats: {}, chartData: [], defaultAccount: null };
 
 	return (
-		<div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-			<div>
+		<div className="w-full max-w-7xl mx-auto px-1 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden">
+			<div className="px-3 sm:px-0">
 				<h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Overview</h1>
-				<p className="text-muted-foreground">Welcome back, {user?.name}. Here's what's happening with your payments.</p>
+				<p className="text-muted-foreground text-sm sm:text-base">Welcome back, {user?.name}. Here's what's happening with your payments.</p>
 			</div>
 
 			{/* Stats Cards */}
-			<div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+			<div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-3 sm:px-0">
 				<Card className="border-border/40 bg-card/60 backdrop-blur-sm group hover:border-primary/40 transition-all duration-300">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground">Total Collection</CardTitle>
@@ -133,15 +133,15 @@ export default function Dashboard() {
 							<CardDescription>Daily successful transaction volume (Last 7 Days)</CardDescription>
 						</div>
 					</CardHeader>
-					<CardContent className="h-[220px] sm:h-[300px] w-full pt-4">
+					<CardContent className="h-[220px] sm:h-[300px] w-full pt-4 px-1 sm:px-4">
 						<ResponsiveContainer width="100%" height="100%">
-							<BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+							<BarChart data={chartData} margin={{ top: 0, right: 10, left: -25, bottom: 0 }}>
 								<CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
 								<XAxis 
 									dataKey="date" 
 									axisLine={false} 
 									tickLine={false} 
-									tick={{fontSize: 10, fontWeight: 700}}
+									tick={{fontSize: 9, fontWeight: 700}}
 									tickFormatter={(value) => {
 										const d = new Date(value);
 										return d.toLocaleDateString(undefined, { weekday: 'short' });

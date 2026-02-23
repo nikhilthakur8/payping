@@ -137,9 +137,9 @@ export default function PaymentPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 py-12">
+		<div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 py-6">
 			{/* Brand Header */}
-			<div className="mb-8 flex items-center gap-2">
+			<div className="mb-4 flex items-center gap-2">
 				<div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
 					<ShieldCheck className="h-5 w-5 text-primary-foreground" />
 				</div>
@@ -226,25 +226,25 @@ export default function PaymentPage() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -20 }}
-						className="max-w-md w-full space-y-6"
+						className="max-w-md w-full space-y-4"
 					>
 						{/* Payment Card */}
-						<Card className="border-border/40 bg-card/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-							{/* Pulse Line */}
-							<div className="absolute top-0 left-0 w-full h-[1px] bg-primary/20">
-								<motion.div 
-									className="h-full bg-primary shadow-[0_0_10px_#fff]"
-									animate={{ left: ["-100%", "100%"] }}
-									transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-									style={{ width: "30%", position: "absolute" }}
-								/>
-							</div>
-
+						<Card className="border-border/40 bg-card/60 backdrop-blur-xl relative overflow-hidden">
 							<CardHeader className="text-center pb-2">
 								<CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
 									Secure Checkout
 								</CardDescription>
-								<div className="text-4xl font-extrabold tracking-tight mb-2">
+
+								{status === "pending" && timeLeft > 0 && (
+									<div className="flex items-center justify-center mb-4">
+										<div className="bg-red-500/10 text-red-600 px-3 py-1.5 rounded-lg flex items-center gap-2 border border-red-500/20">
+											<span className="text-xs font-medium">Expires in:</span>
+											<span className="font-mono text-lg font-bold tracking-wider">{formatTime(timeLeft)}</span>
+										</div>
+									</div>
+								)}
+
+								<div className="text-4xl font-extrabold tracking-tight mb-1">
 									<span className="text-sm font-medium mr-1">₹</span>
 									{order.amount.toFixed(2)}
 								</div>
@@ -255,10 +255,10 @@ export default function PaymentPage() {
 								)}
 							</CardHeader>
 
-							<CardContent className="space-y-8 pt-4">
+							<CardContent className="space-y-4 pt-0">
 								{/* QR Code Section */}
 								<div className="flex flex-col items-center gap-4">
-									<div className="relative w-48 h-48 bg-white p-3 rounded-2xl shadow-inner group">
+									<div className="relative w-44 h-44 bg-white p-2 rounded-xl group">
 										<img 
 											src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(order.qrPayload)}`}
 											alt="UPI QR Code"
@@ -271,65 +271,63 @@ export default function PaymentPage() {
 											<Button
 												variant="default"
 												onClick={() => window.location.href = order.paytmIntent}
-												className="w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all shadow-md font-bold bg-[#00baf2] hover:bg-[#00a3d9] text-white md:hidden"
+												className="w-full h-10 flex items-center justify-center gap-2 rounded bg-[#00baf2] hover:bg-[#0096c4] text-white font-semibold"
 											>
 												Pay with Paytm
 											</Button>
 										)}
-										<Button 
-											variant="default" 
-											onClick={async () => {
-												if (navigator.share) {
-													try {
-														await navigator.share({
-															title: 'Payment QR',
-															text: `Pay ₹${order.amount.toFixed(2)} via UPI`,
-															url: order.qrPayload
-														});
-													} catch (err) {
-														console.error("Share failed", err);
+										<div className="flex gap-2 w-full">
+											<Button 
+												variant="outline" 
+												onClick={async () => {
+													if (navigator.share) {
+														try {
+															await navigator.share({
+																title: 'Payment QR',
+																text: `Pay ₹${order.amount.toFixed(2)} via UPI`,
+																url: order.qrPayload
+															});
+														} catch (err) {
+															console.error("Share failed", err);
+														}
+													} else {
+														copyToClipboard(order.qrPayload);
 													}
-												} else {
-													copyToClipboard(order.qrPayload);
-												}
-											}}
-											className="w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all shadow-md font-semibold"
-										>
-											<Share2 className="h-4 w-4" />
-											Share QR
-										</Button>
+												}}
+												className="flex-1 h-10 flex items-center justify-center rounded"
+												title="Share QR"
+											>
+												<Share2 className="h-5 w-5" />
+											</Button>
 
-										<Button 
-											variant="outline" 
-											onClick={downloadQR}
-											className="w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all shadow-md font-semibold"
-										>
-											<Download className="h-4 w-4" />
-											Download QR
-										</Button>
+											<Button 
+												variant="outline" 
+												onClick={downloadQR}
+												className="flex-1 h-10 flex items-center justify-center rounded"
+												title="Download QR"
+											>
+												<Download className="h-5 w-5" />
+											</Button>
+										</div>
 									</div>
 								</div>
 
 								{/* Waiting Indicator */}
-								<div className="space-y-6">
-									<p className="text-[10px] text-center text-muted-foreground font-medium uppercase tracking-[0.2em] flex items-center justify-center gap-2 mt-3">
-										<Clock className="h-3 w-3 animate-pulse text-primary" />
-										Waiting for payment confirmation
-									</p>
-									{status === "pending" && timeLeft > 0 && (
-										<div className="flex items-center justify-center gap-2">
-											<span className="text-sm font-semibold text-muted-foreground">Expires in:</span>
-											<span className="font-mono text-xl font-bold text-primary">{formatTime(timeLeft)}</span>
-										</div>
-									)}
+								<div className="pt-2 border-t border-border/20">
+									<div className="flex items-center justify-center gap-2 text-muted-foreground group">
+										<Clock className="h-3.5 w-3.5 text-primary shrink-0" />
+										<p className="text-[10px] font-bold uppercase tracking-widest leading-tight text-center">
+											Waiting for payment confirmation
+										</p>
+									</div>
 								</div>
 							</CardContent>
 						</Card>
 
 						{/* Footer Note */}
-						<div className="text-center space-y-4">
-							<p className="text-[10px] text-muted-foreground px-8 leading-relaxed italic">
-								Please do not refresh or close this page until the payment is confirmed. The session will timeout in a few minutes.
+						<div className="text-center px-4">
+							<p className="text-[9px] text-muted-foreground/60 leading-relaxed italic max-w-[280px] mx-auto">
+								Please do not refresh or close this page until the payment is confirmed.
 							</p>
 						</div>
 					</motion.div>

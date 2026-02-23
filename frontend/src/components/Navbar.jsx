@@ -9,136 +9,102 @@ export default function Navbar() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { theme, setTheme } = useTheme();
-	const { token, logout } = useAppContext();
-	const [themeOpen, setThemeOpen] = useState(false);
+	const { token, logout, sidebarOpen, setSidebarOpen } = useAppContext();
 	const [mobileOpen, setMobileOpen] = useState(false);
-	const dropdownRef = useRef(null);
 	const isDashboard = location.pathname.startsWith("/dashboard");
-
-	useEffect(() => {
-		function handleClickOutside(e) {
-			if (
-				dropdownRef.current &&
-				!dropdownRef.current.contains(e.target)
-			) {
-				setThemeOpen(false);
-			}
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () =>
-			document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
 
 	const handleLogout = () => {
 		logout();
 		navigate("/login");
 	};
 
-	const themes = [
-		{ value: "light", label: "Light", icon: Sun },
-		{ value: "dark", label: "Dark", icon: Moon },
-		{ value: "system", label: "System", icon: Monitor },
-	];
+	const toggleTheme = () => {
+		setTheme(theme === "dark" ? "light" : "dark");
+	};
 
 	return (
 		<nav className="sticky top-0 z-50 w-full border-b border-border/90 bg-background/80 backdrop-blur-sm">
-			<div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+			<div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
 				<Link to="/" className="text-xl font-bold tracking-tight">
 					PayPing
 				</Link>
 
-				{/* Desktop nav */}
-				<div className="hidden md:flex items-center gap-2">
-					{/* Theme dropdown */}
-					<div className="relative" ref={dropdownRef}>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => setThemeOpen((prev) => !prev)}
-							aria-label="Toggle theme"
-						>
-							<Palette className="h-4 w-4" />
-						</Button>
+				<div className="flex items-center gap-2">
+					{/* Theme toggle - simplified as per screenshot */}
+					<Button
+						variant="outline"
+						size="icon"
+						onClick={toggleTheme}
+						className="h-9 w-9 rounded-lg bg-background border-border/50"
+						aria-label="Toggle theme"
+					>
+						{theme === "dark" ? (
+							<Sun className="h-[1.2rem] w-[1.2rem]" />
+						) : (
+							<Moon className="h-[1.2rem] w-[1.2rem]" />
+						)}
+					</Button>
 
-						{themeOpen && (
-							<div className="absolute right-0 mt-2 w-36 rounded-md border bg-popover p-1 shadow-md">
-								{themes.map(({ value, label, icon: Icon }) => (
-									<button
-										key={value}
-										onClick={() => {
-											setTheme(value);
-											setThemeOpen(false);
-										}}
-										className={`flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
-											theme === value
-												? "bg-accent text-accent-foreground"
-												: "text-popover-foreground"
-										}`}
+					{/* Desktop nav links */}
+					<div className="hidden md:flex items-center gap-2 ml-2">
+						{token ? (
+							<>
+								{!isDashboard && (
+									<Button
+										variant="outline"
+										onClick={() => navigate("/dashboard")}
+										className="h-9"
 									>
-										<Icon className="h-4 w-4" />
-										{label}
-									</button>
-								))}
-							</div>
+										Dashboard
+									</Button>
+								)}
+							</>
+						) : (
+							<>
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-9"
+									onClick={() => navigate("/login")}
+								>
+									Login
+								</Button>
+								<Button
+									size="sm"
+									className="h-9"
+									onClick={() => navigate("/register")}
+								>
+									Sign Up
+								</Button>
+							</>
 						)}
 					</div>
 
-					{token ? (
-						<>
-							{!isDashboard && (
-								<Button
-									variant="outline"
-									onClick={() => navigate("/dashboard")}
-								>
-									Dashboard
-								</Button>
-							)}
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={handleLogout}
-								aria-label="Logout"
-							>
-								<LogOut className="h-4 w-4" />
-							</Button>
-						</>
-					) : (
-						<>
-							<Button
-								variant="ghost"
-								size="sm"
-								onClick={() => navigate("/login")}
-							>
-								Login
-							</Button>
-							<Button
-								size="sm"
-								onClick={() => navigate("/register")}
-							>
-								Sign Up
-							</Button>
-						</>
-					)}
+					{/* Mobile menu trigger / Sidebar trigger */}
+					<Button
+						variant="ghost"
+						size="icon"
+						className="md:hidden h-10 w-10 rounded-full bg-muted/50"
+						onClick={() => {
+							if (isDashboard) {
+								setSidebarOpen(!sidebarOpen);
+							} else {
+								setMobileOpen(!mobileOpen);
+							}
+						}}
+						aria-label="Toggle menu"
+					>
+						{mobileOpen || (isDashboard && sidebarOpen) ? (
+							<X className="h-5 w-5" />
+						) : (
+							<Menu className="h-5 w-5" />
+						)}
+					</Button>
 				</div>
-
-				{/* Mobile hamburger */}
-				<Button
-					variant="ghost"
-					size="icon"
-					className="md:hidden"
-					onClick={() => setMobileOpen((prev) => !prev)}
-					aria-label="Toggle menu"
-				>
-					{mobileOpen ? (
-						<X className="h-5 w-5" />
-					) : (
-						<Menu className="h-5 w-5" />
-					)}
-				</Button>
 			</div>
 
-			{/* Mobile menu */}
-			{mobileOpen && (
+			{/* Mobile menu for non-dashboard pages */}
+			{!isDashboard && mobileOpen && (
 				<div className="md:hidden border-t border-border/40 bg-background px-4 pb-4 pt-2 space-y-2">
 					{/* Theme options */}
 					<div className="flex items-center gap-1">

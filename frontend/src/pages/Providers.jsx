@@ -261,8 +261,16 @@ export default function Providers() {
 
 			{/* Add Provider Form */}
 			{showAddForm && (
-				<Card className="mb-8 overflow-hidden bg-card/60 backdrop-blur-sm border-muted-foreground/10">
-				<CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-muted/30 pb-4 gap-3">
+				<Card className="mb-8 overflow-hidden bg-card/60 backdrop-blur-sm border-muted-foreground/10 relative">
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={() => setShowAddForm(false)}
+						className="absolute right-4 top-4 z-10 rounded-full hover:bg-muted/50 h-8 w-8"
+					>
+						<X className="h-4 w-4" />
+					</Button>
+					<CardHeader className="border-b border-muted/30 pb-4 pr-12">
 						<div>
 							<CardTitle className="text-lg font-bold">
 								Add Provider Account
@@ -271,14 +279,6 @@ export default function Providers() {
 								Link a new payment provider to your account
 							</CardDescription>
 						</div>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => setShowAddForm(false)}
-							className="rounded-full hover:bg-muted/50"
-						>
-							<X className="h-4 w-4" />
-						</Button>
 					</CardHeader>
 					<CardContent className="pt-6">
 						<form

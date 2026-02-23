@@ -117,8 +117,8 @@ export default function Developer() {
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
 			<div>
-				<h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Developer Settings</h1>
-				<p className="text-muted-foreground">Manage your API keys and webhook secrets for integration.</p>
+				<h1 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase">Developer</h1>
+				<p className="text-muted-foreground text-sm font-medium">Manage your API keys and webhook secrets for integration.</p>
 			</div>
 
 			<div className="grid gap-6 md:grid-cols-2">
@@ -135,7 +135,7 @@ export default function Developer() {
 						{/* API Key */}
 						<div className="space-y-3">
 							<div className="flex items-center justify-between">
-								<p className="text-xs font-black uppercase tracking-widest text-muted-foreground">API Key</p>
+								<p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">API Key</p>
 								<Button 
 									variant="ghost" 
 									size="sm" 
@@ -167,7 +167,7 @@ export default function Developer() {
 						{/* Webhook Secret */}
 						<div className="space-y-3">
 							<div className="flex items-center justify-between">
-								<p className="text-xs font-black uppercase tracking-widest text-muted-foreground">Webhook Secret</p>
+								<p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Webhook Secret</p>
 								<Button 
 									variant="ghost" 
 									size="sm" 
@@ -201,7 +201,7 @@ export default function Developer() {
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-2">
 									<Globe className="h-3.5 w-3.5 text-muted-foreground" />
-									<p className="text-xs font-black uppercase tracking-widest text-muted-foreground">Webhook Callback URL</p>
+									<p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Webhook Callback URL</p>
 								</div>
 								{user?.callbackUrl !== callbackUrl && (
 									<span className="text-[10px] font-bold text-amber-500 uppercase tracking-tighter">Unsaved Changes</span>
@@ -212,7 +212,7 @@ export default function Developer() {
 									placeholder="https://your-api.com/webhooks/payping"
 									value={callbackUrl} 
 									onChange={(e) => setCallbackUrl(e.target.value)}
-									className="text-sm bg-muted/30 border-muted-foreground/20"
+									className="font-mono text-xs bg-muted/30 border-muted-foreground/20"
 								/>
 								<Button 
 									variant="secondary" 

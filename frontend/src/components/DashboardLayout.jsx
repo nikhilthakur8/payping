@@ -1,41 +1,27 @@
-import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
 	Settings,
 	Wallet,
 	ShoppingCart,
 	LayoutDashboard,
-	PanelLeft,
 	FileText,
 	Code,
+	LogOut,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 
-const sidebarLinks = [
-	{ to: "/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
-	{ to: "/dashboard/providers", label: "Provider", icon: Wallet },
-	{ to: "/dashboard/orders", label: "Payment Order", icon: ShoppingCart },
-	{ to: "/dashboard/api-docs", label: "API Docs", icon: FileText },
-	{ to: "/dashboard/developer", label: "Developer", icon: Code },
-	{ to: "/dashboard/settings", label: "Settings", icon: Settings },
-];
-
 export default function DashboardLayout() {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const navigate = useNavigate();
+	const { logout, sidebarOpen, setSidebarOpen } = useAppContext();
+
+	const handleLogout = () => {
+		logout();
+		navigate("/login");
+	};
 
 	return (
 		<div className="flex min-h-screen relative">
-			{/* Mobile Toggle Button */}
-			<Button
-				variant="outline"
-				size="icon"
-				className="fixed bottom-4 right-4 z-50 md:hidden rounded-full h-12 w-12 shadow-lg bg-background"
-				onClick={() => setSidebarOpen((prev) => !prev)}
-			>
-				<PanelLeft className="h-6 w-6" />
-			</Button>
-
 			{/* Mobile Overlay */}
 			{sidebarOpen && (
 				<div 
@@ -47,12 +33,12 @@ export default function DashboardLayout() {
 			{/* Sidebar */}
 			<aside 
 				className={cn(
-					"fixed top-14 bottom-0 left-0 z-40 w-56 border-r border-border/40 bg-background/95 backdrop-blur-sm transition-transform duration-300 ease-in-out md:translate-x-0 pt-6 px-4",
+					"fixed top-14 bottom-0 left-0 z-40 w-56 border-r border-border/40 bg-background/95 backdrop-blur-sm transition-transform duration-300 ease-in-out md:translate-x-0 pt-6 px-4 flex flex-col justify-between pb-6",
 					sidebarOpen ? "translate-x-0" : "-translate-x-full"
 				)}
 			>
-				<nav className="flex flex-col gap-2">
-					<div className="px-2 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+				<nav className="flex flex-col gap-1.5">
+					<div className="px-3 mb-4 text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
 						Menu
 					</div>
 					{[
@@ -70,23 +56,36 @@ export default function DashboardLayout() {
 							onClick={() => setSidebarOpen(false)}
 							className={({ isActive }) =>
 								cn(
-									"flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
+									"flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 border border-transparent",
 									isActive 
-										? "bg-primary/10 text-primary" 
+										? "bg-secondary text-foreground shadow-sm border-border/50" 
 										: "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
 								)
 							}
 						>
-							<Icon className="h-4 w-4" />
+							<Icon className="h-[18px] w-[18px]" />
 							{label}
 						</NavLink>
 					))}
 				</nav>
+
+				<div className="pt-4 border-t border-border/40">
+					<button
+						onClick={() => {
+							handleLogout();
+							setSidebarOpen(false);
+						}}
+						className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-all duration-200 hover:bg-destructive/10 hover:text-destructive"
+					>
+						<LogOut className="h-[18px] w-[18px]" />
+						Logout
+					</button>
+				</div>
 			</aside>
 
 			{/* Main Content Area */}
-			<main className="flex-1 md:ml-56 min-h-screen">
-				<div className="container max-w-7xl mx-auto p-4 md:p-8 pt-6">
+			<main className="flex-1 md:ml-56 min-h-screen overflow-x-hidden">
+				<div className="w-full max-w-7xl mx-auto p-3 sm:p-4 md:p-8 pt-4 sm:pt-6">
 					<Outlet />
 				</div>
 			</main>

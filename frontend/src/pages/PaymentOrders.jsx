@@ -179,11 +179,11 @@ export default function PaymentOrders() {
 				<DialogContent className="sm:max-w-[500px]">
 					{!createdOrder ? (
 						<>
-							<DialogHeader className="space-y-3">
-								<DialogTitle className="text-2xl font-bold tracking-tight">
-									New Payment Request
+							<DialogHeader className="space-y-2">
+								<DialogTitle className="text-2xl font-black tracking-tighter uppercase">
+									New Request
 								</DialogTitle>
-								<DialogDescription className="text-muted-foreground/90 text-sm">
+								<DialogDescription className="text-muted-foreground/90 text-[13px] font-medium leading-tight">
 									Generate a new UPI payment link for your customers.
 								</DialogDescription>
 							</DialogHeader>
@@ -192,7 +192,7 @@ export default function PaymentOrders() {
 								className="grid gap-6 pt-4"
 							>
 								<div className="space-y-2">
-									<Label htmlFor="amount" className="text-foreground/90 font-medium">
+									<Label htmlFor="amount" className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
 										Amount (INR) <span className="text-destructive">*</span>
 									</Label>
 									<Input
@@ -204,12 +204,12 @@ export default function PaymentOrders() {
 										placeholder="e.g. 500.00"
 										required
 										autoComplete="off"
-										className="rounded-lg border-muted-foreground/20 focus:border-primary transition-all text-lg font-semibold"
+										className="rounded-lg h-11 border-muted-foreground/20 focus:border-primary transition-all text-base font-bold"
 									/>
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor="clientRef" className="text-foreground/90 font-medium">
+									<Label htmlFor="clientRef" className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
 										Reference Id (Optional)
 									</Label>
 									<Input
@@ -218,12 +218,12 @@ export default function PaymentOrders() {
 										onChange={(e) => setClientRef(e.target.value)}
 										placeholder="Your internal ID"
 										autoComplete="off"
-										className="rounded-lg border-muted-foreground/20 focus:border-primary transition-all"
+										className="rounded-lg h-11 border-muted-foreground/20 focus:border-primary transition-all text-sm font-semibold"
 									/>
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor="note" className="text-foreground/90 font-medium">
+									<Label htmlFor="note" className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
 										Payment Note
 									</Label>
 									<Input
@@ -232,7 +232,7 @@ export default function PaymentOrders() {
 										onChange={(e) => setNote(e.target.value)}
 										placeholder="What is this payment for?"
 										autoComplete="off"
-										className="rounded-lg border-muted-foreground/20 focus:border-primary transition-all"
+										className="rounded-lg h-11 border-muted-foreground/20 focus:border-primary transition-all text-sm font-semibold"
 									/>
 								</div>
 
@@ -248,12 +248,12 @@ export default function PaymentOrders() {
 							</form>
 						</>
 					) : (
-						<div className="py-6 text-center animate-in zoom-in-95 duration-500">
+						<div className="py-2 sm:py-6 text-center animate-in zoom-in-95 duration-500">
 							<div className="mx-auto h-16 w-16 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mb-6">
 								<CheckCircle2 className="h-8 w-8" />
 							</div>
-							<h3 className="text-2xl font-bold mb-2">Success</h3>
-							<p className="text-muted-foreground mb-8 text-sm">Your payment order is ready for sharing.</p>
+							<h3 className="text-2xl font-black tracking-tight mb-1 uppercase">Success</h3>
+							<p className="text-muted-foreground mb-8 text-[13px] font-medium leading-tight">Your payment order is ready for sharing.</p>
 							
 							<div className="grid gap-3 mb-8 bg-muted/20 p-6 rounded-2xl border border-muted/50">
 								{createdOrder.clientRef && (
@@ -277,20 +277,21 @@ export default function PaymentOrders() {
 										<Button 
 											size="sm" 
 											variant="secondary"
-											className="h-9 px-4"
+											className="h-9"
 											onClick={() => {
 												navigator.clipboard.writeText(createdOrder.upiLink);
 												toast.success("Link copied to clipboard");
 											}}
 										>
-											Copy
+											<Copy className="h-4 w-4" />
 										</Button>
 										<Button
 											size="sm"
-											className="h-9 px-4"
+											className="h-9"
 											onClick={() => window.open(createdOrder.upiLink, '_blank')}
 										>
-											Go To
+											<ExternalLink className="h-4 w-4" />
+											
 										</Button>
 									</div>
 								</div>
@@ -366,9 +367,8 @@ export default function PaymentOrders() {
 				</div>
 			)}
 
-			{/* Order Details Dialog */}
 			<Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-				<DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl max-h-[90vh] overflow-y-auto">
+				<DialogContent className="w-[98vw] sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl max-h-[95vh] overflow-y-auto">
 					{orderDetailsLoading ? (
 						<div className="py-20 flex flex-col items-center justify-center gap-4">
 							<div className="h-8 w-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>

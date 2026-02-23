@@ -78,7 +78,7 @@ export const createOrder = async (user, orderData) => {
 		upiLink,
 		qrPayload,
 		paytmIntent,
-		expiresIn: 300,
+		expiresIn: 600,
 	};
 };
 
@@ -111,9 +111,9 @@ export const checkOrderStatus = async (internalRef) => {
 		return buildStatusResponse(order);
 	}
 
-	// 2. Check 5 minute limit (expire if pending too long)
-	const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-	if (order.createdAt < fiveMinutesAgo) {
+	// 2. Check 10 minute limit (expire if pending too long)
+	const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+	if (order.createdAt < tenMinutesAgo) {
 		order.status = "failed";
 		order.providerResponse = null;
 		await order.save();
@@ -164,7 +164,7 @@ export const getPublicOrderDetails = async (internalRef) => {
 
 	const paytmIntent = `paytmmp://cash_wallet?pa=${vpa}&pn=${pn}&tr=${internalRef}&am=${order.amount}&cu=INR&tn=${tn}&featuretype=money_transfer`;
 
-	const expireTime = order.createdAt.getTime() + 5 * 60 * 1000;
+	const expireTime = order.createdAt.getTime() + 10 * 60 * 1000;
 	const expiresIn = Math.max(0, Math.floor((expireTime - Date.now()) / 1000));
 
 	const orderObj = order.toObject();

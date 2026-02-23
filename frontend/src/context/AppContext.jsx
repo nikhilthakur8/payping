@@ -51,6 +51,8 @@ export const AppProvider = ({ children }) => {
 		setUser(null);
 	};
 
+	const [sidebarOpen, setSidebarOpen] = useState(false);
+
 	const isVerified = user?.isVerified ?? false;
 
 	return (
@@ -62,6 +64,8 @@ export const AppProvider = ({ children }) => {
 				login,
 				logout,
 				loading,
+				sidebarOpen,
+				setSidebarOpen,
 				refetchProfile: () => fetchProfile(token),
 			}}
 		>
