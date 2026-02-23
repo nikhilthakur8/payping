@@ -32,8 +32,13 @@ export default function Navbar() {
 						isDashboard && "md:w-56 md:border-r border-border/40"
 					)}
 				>
-					<Link to="/" className="text-xl font-bold tracking-tight">
-						PayPing
+					<Link to="/" className="flex items-center gap-2.5 group">
+						<div className="h-8 w-8 rounded-lg bg-primary overflow-hidden flex items-center justify-center p-0.5 shadow-sm group-hover:scale-105 transition-transform">
+							<img src="/logo.png" alt="PayPing" className="w-full h-full object-contain invert dark:invert-0" />
+						</div>
+						<span className="text-xl font-bold tracking-tight">
+							PayPing
+						</span>
 					</Link>
 				</div>
 
