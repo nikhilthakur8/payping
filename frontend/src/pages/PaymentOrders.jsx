@@ -378,34 +378,37 @@ export default function PaymentOrders() {
 						<div className="flex flex-col">
 							{/* Header Gradient */}
 							<div className={cn(
-								"h-24 px-6 flex items-center justify-between",
+								"h-20 sm:h-24 px-4 sm:px-6 flex items-center justify-between relative",
 								selectedOrder.status === 'success' ? 'bg-green-500/10' :
 								selectedOrder.status === 'pending' ? 'bg-amber-500/10' :
 								'bg-red-500/10'
 							)}>
-								<div className="flex items-center gap-4">
+								<div className="flex items-center gap-3 sm:gap-4">
 									<div className={cn(
-										"h-14 w-14 rounded-2xl flex items-center justify-center shadow-sm",
+										"h-12 w-12 sm:h-14 sm:w-14 rounded-2xl flex items-center justify-center shadow-sm",
 										selectedOrder.status === 'success' ? 'bg-green-500 text-white' :
 										selectedOrder.status === 'pending' ? 'bg-amber-500 text-white' :
 										'bg-red-500 text-white'
 									)}>
-										{selectedOrder.status === 'success' ? <CheckCircle2 className="h-8 w-8" /> :
-										 selectedOrder.status === 'pending' ? <Clock className="h-8 w-8" /> :
-										 <X className="h-8 w-8" />}
+										{selectedOrder.status === 'success' ? <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8" /> :
+										 selectedOrder.status === 'pending' ? <Clock className="h-6 w-6 sm:h-8 sm:w-8" /> :
+										 <X className="h-6 w-6 sm:h-8 sm:w-8" />}
 									</div>
 									<div>
-										<h2 className="text-xl font-bold">₹{selectedOrder.amount.toFixed(2)}</h2>
+										<h2 className="text-xl sm:text-2xl font-black tracking-tight">₹{selectedOrder.amount.toFixed(2)}</h2>
 										<p className={cn(
-											"text-[10px] font-black uppercase tracking-widest",
+											"text-[10px] font-black uppercase tracking-[0.2em] opacity-80",
 											selectedOrder.status === 'success' ? 'text-green-600' :
 											selectedOrder.status === 'pending' ? 'text-amber-600' :
 											'text-red-600'
 										)}>
-											Payment {selectedOrder.status}
+											{selectedOrder.status}
 										</p>
 									</div>
 								</div>
+								<DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-1.5 bg-background/50 hover:bg-background transition-colors md:hidden">
+									<X className="h-4 w-4" />
+								</DialogPrimitive.Close>
 							</div>
 
 							<div className="p-6 space-y-8">
@@ -448,26 +451,32 @@ export default function PaymentOrders() {
 								{/* Provider Info */}
 								{selectedOrder.providerAccount && (
 									<div className="rounded-2xl border border-muted/50 overflow-hidden bg-muted/5">
-										<div className="px-4 py-2 border-b border-muted/50 bg-muted/10 flex justify-between items-center">
-											<p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Routing Provider</p>
+										<div className="px-4 py-2 border-b border-muted/50 bg-muted/10">
+											<p className="text-[10px] uppercase font-black text-muted-foreground/60 tracking-[0.2em]">Routing Provider</p>
 										</div>
-										<div className="p-4 flex items-center justify-between">
+										<div className="p-4 space-y-4">
 											<div className="flex items-center gap-3">
-												<div className="h-10 w-10 rounded-full bg-background border border-muted/50 flex items-center justify-center p-1.5 overflow-hidden">
+												<div className="h-10 w-10 rounded-xl bg-background border border-muted/50 flex items-center justify-center p-1.5 overflow-hidden shrink-0">
 													{selectedOrder.providerAccount.provider?.providerPhoto ? (
 														<img src={selectedOrder.providerAccount.provider.providerPhoto} alt="" className="w-full h-full object-contain" />
 													) : (
 														<ShieldCheck className="h-5 w-5 text-muted-foreground" />
 													)}
 												</div>
-												<div>
-													<p className="text-sm font-bold">{selectedOrder.providerAccount.provider?.name}</p>
-													<p className="text-[11px] text-muted-foreground font-mono">{selectedOrder.providerAccount.vpa}</p>
+												<div className="min-w-0 flex-1">
+													<p className="text-sm font-bold truncate">{selectedOrder.providerAccount.provider?.name}</p>
+													<p className="text-[11px] text-muted-foreground font-mono truncate">{selectedOrder.providerAccount.vpa}</p>
 												</div>
 											</div>
-											<div className="text-right">
-												<p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Merchant ID</p>
-												<p className="text-xs font-mono font-bold">{selectedOrder.providerAccount.merchantId}</p>
+											<div className="pt-3 border-t border-muted/50 grid grid-cols-2 gap-4">
+												<div className="space-y-0.5">
+													<p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Merchant ID</p>
+													<p className="text-xs font-mono font-bold truncate">{selectedOrder.providerAccount.merchantId}</p>
+												</div>
+												<div className="space-y-0.5 text-right">
+													<p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Status</p>
+													<span className="text-[10px] bg-green-500/10 text-green-600 font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+												</div>
 											</div>
 										</div>
 									</div>
