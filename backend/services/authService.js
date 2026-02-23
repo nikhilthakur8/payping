@@ -4,6 +4,9 @@ import ErrorHandler from "../utils/ErrorHandler.js";
 import { signToken } from "../utils/jwt.js";
 import sendEmail from "../utils/sendEmail.js";
 import { generateApiKey, generateWebhookSecret } from "../utils/keys.js";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate 6 digit OTP
 const generateOTP = () => {
@@ -120,6 +123,70 @@ export const login = async (email, password) => {
 	}
 
 	// Generate JWT
+	const token = signToken({ id: user._id, email: user.email });
+
+	return {
+		user: {
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			isVerified: user.isVerified,
+		},
+		token,
+	};
+};
+
+export const googleLogin = async (idToken) => {
+	let userData;
+
+	try {
+		// Try verifying as an ID Token first (for GoogleLogin component)
+		const ticket = await client.verifyIdToken({
+			idToken,
+			audience: process.env.GOOGLE_CLIENT_ID,
+		});
+		const payload = ticket.getPayload();
+		userData = {
+			name: payload.name,
+			email: payload.email,
+			googleId: payload.sub,
+		};
+	} catch (error) {
+		// If ID token verification fails, try as an Access Token (for custom button)
+		try {
+			const res = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${idToken}`);
+			userData = await res.json();
+			if (!userData.email) throw new Error();
+			userData.googleId = userData.sub;
+		} catch (innerError) {
+			throw new ErrorHandler("Invalid Google Token", 401);
+		}
+	}
+
+	const { name, email, googleId } = userData;
+
+	let user = await User.findOne({ email });
+
+	if (user) {
+		if (!user.googleId) {
+			user.googleId = googleId;
+			await user.save();
+		}
+	} else {
+		user = await User.create({
+			name,
+			email,
+			googleId,
+			isVerified: true,
+			apiKey: generateApiKey(),
+			webhookSecret: generateWebhookSecret(),
+		});
+	}
+
+	if (user.status === "blocked") {
+		throw new ErrorHandler("Your account has been blocked", 403);
+	}
+
 	const token = signToken({ id: user._id, email: user.email });
 
 	return {

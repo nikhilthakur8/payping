@@ -1,4 +1,5 @@
 import * as authService from "../services/authService.js";
+import ErrorHandler from "../utils/ErrorHandler.js";
 
 /**
  * @desc Register a new user
@@ -67,6 +68,28 @@ export const verifyOTPController = async (req, res, next) => {
 		res.status(200).json({
 			status: "success",
 			...result
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+/**
+ * @desc Handle Google Login
+ * @route POST /auth/google
+ * @access Public
+ */
+export const googleLoginController = async (req, res, next) => {
+	try {
+		const { idToken } = req.body;
+		if (!idToken) {
+			throw new ErrorHandler("ID Token is required", 400);
+		}
+		const result = await authService.googleLogin(idToken);
+		res.status(200).json({
+			status: "success",
+			message: "Google login successful",
+			data: result,
 		});
 	} catch (error) {
 		next(error);
