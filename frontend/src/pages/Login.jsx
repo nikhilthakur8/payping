@@ -133,7 +133,7 @@ export default function Login() {
 
 							<Button
 								type="button"
-								variant="default"
+								variant="outline"
 								className="w-full flex items-center justify-center gap-2"
 								onClick={() => handleGoogleLogin()}
 							>
