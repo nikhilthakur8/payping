@@ -52,6 +52,9 @@ export const createOrder = async (user, orderData) => {
 	const vpa = providerAccount.vpa;
 	const qrPayload = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(user.name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note || "Payment")}&tr=${internalRef}`;
 
+	// Generate Paytm Intent
+	const paytmIntent = `paytmmp://cash_wallet?pa=${vpa}&pn=${encodeURIComponent(user.name)}&tr=${internalRef}&am=${amount}&cu=INR&tn=${encodeURIComponent(note || "Payment")}&featuretype=money_transfer`;
+
 	// 5. Generate Frontend Link
 	const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 	const upiLink = `${frontendUrl}/payment/${internalRef}`;
@@ -74,6 +77,8 @@ export const createOrder = async (user, orderData) => {
 		note,
 		upiLink,
 		qrPayload,
+		paytmIntent,
+		expiresIn: 300,
 	};
 };
 
@@ -147,13 +152,26 @@ export const checkOrderStatus = async (internalRef) => {
  * @desc Get minimal order details for public payment page
  */
 export const getPublicOrderDetails = async (internalRef) => {
-	const order = await PaymentOrder.findOne({ internalRef }).select("amount upiLink qrPayload clientRef status note utr redirectUri");
+	const order = await PaymentOrder.findOne({ internalRef }).select("createdAt amount upiLink qrPayload clientRef status note utr redirectUri");
 
 	if (!order) {
 		throw new ErrorHandler("Order not found", 404);
 	}
 
-	return order;
+	const vpa = order.qrPayload.match(/pa=([^&]+)/)?.[1] || "";
+	const pn = order.qrPayload.match(/pn=([^&]+)/)?.[1] || "";
+	const tn = order.qrPayload.match(/tn=([^&]+)/)?.[1] || "";
+
+	const paytmIntent = `paytmmp://cash_wallet?pa=${vpa}&pn=${pn}&tr=${internalRef}&am=${order.amount}&cu=INR&tn=${tn}&featuretype=money_transfer`;
+
+	const expireTime = order.createdAt.getTime() + 5 * 60 * 1000;
+	const expiresIn = Math.max(0, Math.floor((expireTime - Date.now()) / 1000));
+
+	const orderObj = order.toObject();
+	orderObj.paytmIntent = paytmIntent;
+	orderObj.expiresIn = expiresIn;
+
+	return orderObj;
 };
 
 /**

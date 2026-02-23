@@ -276,6 +276,7 @@ export default function PaymentOrders() {
 										/>
 										<Button 
 											size="sm" 
+											variant="secondary"
 											className="h-9 px-4"
 											onClick={() => {
 												navigator.clipboard.writeText(createdOrder.upiLink);
@@ -283,6 +284,13 @@ export default function PaymentOrders() {
 											}}
 										>
 											Copy
+										</Button>
+										<Button
+											size="sm"
+											className="h-9 px-4"
+											onClick={() => window.open(createdOrder.upiLink, '_blank')}
+										>
+											Go To
 										</Button>
 									</div>
 								</div>

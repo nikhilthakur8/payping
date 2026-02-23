@@ -13,11 +13,14 @@ export default function PaymentPage() {
 	const [loading, setLoading] = useState(true);
 	const [status, setStatus] = useState("pending"); // pending, success, failed
 
+	const [timeLeft, setTimeLeft] = useState(0);
+
 	async function fetchOrderDetails() {
 		try {
 			const { data } = await API.get(`/payment/details/${internalRef}`);
 			setOrder(data.data);
 			setStatus(data.data.status);
+			setTimeLeft(data.data.expiresIn || 0);
 		} catch (error) {
 			toast.error(error.response?.data?.message || "Order not found");
 		} finally {
@@ -53,6 +56,27 @@ export default function PaymentPage() {
 		}
 		return () => clearInterval(interval);
 	}, [status, internalRef]);
+
+	// Countdown timer for expiration
+	useEffect(() => {
+		if (status !== "pending" || timeLeft <= 0) return;
+		const timerId = setInterval(() => {
+			setTimeLeft(prev => {
+				if (prev <= 1) {
+					clearInterval(timerId);
+					return 0;
+				}
+				return prev - 1;
+			});
+		}, 1000);
+		return () => clearInterval(timerId);
+	}, [status, timeLeft]);
+
+	const formatTime = (seconds) => {
+		const m = Math.floor(seconds / 60);
+		const s = seconds % 60;
+		return `${m}:${s < 10 ? '0' : ''}${s}`;
+	};
 
 	const copyToClipboard = (text) => {
 		navigator.clipboard.writeText(text);
@@ -97,13 +121,13 @@ export default function PaymentPage() {
 		);
 	}
 
-	if (!order) {
+	if (!order || (status === "pending" && timeLeft === 0 && order.createdAt)) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-background px-4">
 				<Card className="max-w-md w-full border-destructive/20 bg-destructive/5">
 					<CardContent className="pt-6 text-center">
 						<AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-						<h1 className="text-xl font-bold mb-2">Order Not Found</h1>
+						<h1 className="text-xl font-bold mb-2">Order Not Found or Expired</h1>
 						<p className="text-muted-foreground mb-6">The payment link you followed might be invalid or expired.</p>
 						<Button onClick={() => window.location.reload()} variant="outline">Try Again</Button>
 					</CardContent>
@@ -243,6 +267,15 @@ export default function PaymentPage() {
 									</div>
 									
 									<div className="flex flex-col items-center gap-3 w-full max-w-[220px]">
+										{order.paytmIntent && (
+											<Button
+												variant="default"
+												onClick={() => window.location.href = order.paytmIntent}
+												className="w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all shadow-md font-bold bg-[#00baf2] hover:bg-[#00a3d9] text-white md:hidden"
+											>
+												Pay with Paytm
+											</Button>
+										)}
 										<Button 
 											variant="default" 
 											onClick={async () => {
@@ -283,6 +316,12 @@ export default function PaymentPage() {
 										<Clock className="h-3 w-3 animate-pulse text-primary" />
 										Waiting for payment confirmation
 									</p>
+									{status === "pending" && timeLeft > 0 && (
+										<div className="flex items-center justify-center gap-2">
+											<span className="text-sm font-semibold text-muted-foreground">Expires in:</span>
+											<span className="font-mono text-xl font-bold text-primary">{formatTime(timeLeft)}</span>
+										</div>
+									)}
 								</div>
 							</CardContent>
 						</Card>
