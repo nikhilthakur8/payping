@@ -15,6 +15,11 @@ const userProviderAccountSchema = new mongoose.Schema(
 			index: true,
 		},
 
+		businessName: {
+			type: String,
+			required: true,
+		},
+
 		merchantId: {
 			type: String,
 			required: true,
