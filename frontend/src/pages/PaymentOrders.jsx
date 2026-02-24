@@ -15,6 +15,7 @@ import { Plus, X, ExternalLink, Calendar, CheckCircle2, Clock, Copy, ShieldCheck
 import { cn } from "@/lib/utils";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
@@ -406,9 +407,9 @@ export default function PaymentOrders() {
 										</p>
 									</div>
 								</div>
-								<DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-1.5 bg-background/50 hover:bg-background transition-colors md:hidden">
-									<X className="h-4 w-4" />
-								</DialogPrimitive.Close>
+							<DialogClose className="absolute right-4 top-4 rounded-full p-1.5 bg-background/50 hover:bg-background transition-colors md:hidden">
+								<X className="h-4 w-4" />
+							</DialogClose>
 							</div>
 
 							<div className="p-6 space-y-8">
