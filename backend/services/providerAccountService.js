@@ -2,7 +2,7 @@ import UserProviderAccount from "../models/UserProviderAccount.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 
 export const createAccount = async (userId, accountData) => {
-	const { provider, merchantId, vpa, isDefault } = accountData;
+	const { provider, businessName, merchantId, vpa, isDefault } = accountData;
 
 	const existingAccount = await UserProviderAccount.findOne({ user: userId, provider });
 	if (existingAccount) {
@@ -24,6 +24,7 @@ export const createAccount = async (userId, accountData) => {
 	const account = await UserProviderAccount.create({
 		user: userId,
 		provider,
+		businessName,
 		merchantId,
 		vpa,
 		isDefault: shouldBeDefault,

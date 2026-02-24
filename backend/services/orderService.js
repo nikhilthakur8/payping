@@ -50,10 +50,11 @@ export const createOrder = async (user, orderData) => {
 	// 4. Generate UPI Intent URL (qrPayload)
 	// pa: VPA, pn: Name, am: Amount, cu: Currency, tn: Note/Ref, tr: Ref
 	const vpa = providerAccount.vpa;
-	const qrPayload = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(user.name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note || "Payment")}&tr=${internalRef}`;
+	const payeeName = providerAccount.businessName || user.name;
+	const qrPayload = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note || "Payment")}&tr=${internalRef}`;
 
 	// Generate Paytm Intent
-	const paytmIntent = `paytmmp://cash_wallet?pa=${vpa}&pn=${encodeURIComponent(user.name)}&tr=${internalRef}&am=${amount}&cu=INR&tn=${encodeURIComponent(note || "Payment")}&featuretype=money_transfer`;
+	const paytmIntent = `paytmmp://cash_wallet?pa=${vpa}&pn=${encodeURIComponent(payeeName)}&tr=${internalRef}&am=${amount}&cu=INR&tn=${encodeURIComponent(note || "Payment")}&featuretype=money_transfer`;
 
 	// 5. Generate Frontend Link
 	const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
@@ -152,7 +153,9 @@ export const checkOrderStatus = async (internalRef) => {
  * @desc Get minimal order details for public payment page
  */
 export const getPublicOrderDetails = async (internalRef) => {
-	const order = await PaymentOrder.findOne({ internalRef }).select("createdAt amount upiLink qrPayload clientRef status note utr redirectUri");
+	const order = await PaymentOrder.findOne({ internalRef })
+		.select("createdAt amount upiLink qrPayload clientRef status note utr redirectUri providerAccount")
+		.populate("providerAccount", "businessName");
 
 	if (!order) {
 		throw new ErrorHandler("Order not found", 404);
@@ -168,8 +171,10 @@ export const getPublicOrderDetails = async (internalRef) => {
 	const expiresIn = Math.max(0, Math.floor((expireTime - Date.now()) / 1000));
 
 	const orderObj = order.toObject();
+	orderObj.businessName = order.providerAccount?.businessName || decodeURIComponent(pn);
 	orderObj.paytmIntent = paytmIntent;
 	orderObj.expiresIn = expiresIn;
+	delete orderObj.providerAccount;
 
 	return orderObj;
 };
@@ -305,7 +310,7 @@ export const getDashboardStats = async (user) => {
 	const defaultAccount = await UserProviderAccount.findOne({
 		user: userId,
 		isDefault: true
-	}).populate("provider", "name code providerPhoto");
+	}).populate("provider", "name code providerPhoto").select("businessName merchantId vpa isDefault provider");
 
 	return {
 		stats,

@@ -126,8 +126,6 @@ export const sendWebhook = async (order) => {
 export const webhookRetryJob = cron.schedule("*/5 * * * *", async () => {
 	try {
 		const now = new Date();
-		// Fetch logs that are in 'retry' status and for which the nextRetryAt time has passed
-		// or logs stuck in process 'pending' state for more than 5 minutes
 		const pendingLogs = await CallbackLog.find({
 			$or: [
 				{ status: "retry", nextRetryAt: { $lte: now } },

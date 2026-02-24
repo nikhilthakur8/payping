@@ -2,16 +2,15 @@ import cron from "node-cron";
 import PaymentOrder from "../models/PaymentOrder.js";
 import { sendWebhook } from "../services/webhookService.js";
 
-// Run every minute
-const cleanupJob = cron.schedule("* * * * *", async () => {
-	console.log("Running order cleanup cron job...");
+// Run every 2 minutes
+const cleanupJob = cron.schedule("*/2 * * * *", async () => {
 	try {
-		const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+		const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
-		// Find pending orders older than 5 minutes
+		// Find pending orders older than 10 minutes (matches checkOrderStatus expiry)
 		const expiredOrders = await PaymentOrder.find({
 			status: "pending",
-			createdAt: { $lt: fiveMinutesAgo }
+			createdAt: { $lt: tenMinutesAgo }
 		})
 			.populate("user")
 			.populate({

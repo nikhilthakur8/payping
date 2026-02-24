@@ -251,7 +251,7 @@ export default function Dashboard() {
 											</div>
 											<div className="space-y-1">
 												<p className="text-[10px] font-bold text-muted-foreground">Business Name</p>
-												<p className="text-sm font-bold truncate">{user?.name}</p>
+												<p className="text-sm font-bold truncate">{stats.defaultAccount.businessName || user?.name}</p>
 											</div>
 										</div>
 									</div>

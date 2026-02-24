@@ -230,19 +230,15 @@ export default function PaymentPage() {
 					>
 						{/* Payment Card */}
 						<Card className="border-border/40 bg-card/60 backdrop-blur-xl relative overflow-hidden">
+							{status === "pending" && (
+								<div className="h-0.5 w-full bg-muted/30">
+									<div className="h-full w-1/3 bg-primary rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]" />
+								</div>
+							)}
 							<CardHeader className="text-center pb-2">
-								<CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-									Secure Checkout
+								<CardDescription className="text-base font-bold uppercase tracking-widest text-foreground/80 mb-1">
+									{order?.businessName || "Secure Checkout"}
 								</CardDescription>
-
-								{status === "pending" && timeLeft > 0 && (
-									<div className="flex items-center justify-center mb-4">
-										<div className="bg-red-500/10 text-red-600 px-3 py-1.5 rounded-lg flex items-center gap-2 border border-red-500/20">
-											<span className="text-xs font-medium">Expires in:</span>
-											<span className="font-mono text-lg font-bold tracking-wider">{formatTime(timeLeft)}</span>
-										</div>
-									</div>
-								)}
 
 								<div className="text-4xl font-extrabold tracking-tight mb-1">
 									<span className="text-sm font-medium mr-1">₹</span>
@@ -312,12 +308,19 @@ export default function PaymentPage() {
 									</div>
 								</div>
 
-								{/* Waiting Indicator */}
-								<div className="pt-2 border-t border-border/20">
-									<div className="flex items-center justify-center gap-2 text-muted-foreground group">
+								{/* Footer */}
+								<div className="pt-3 border-t border-border/20 space-y-3">
+									{status === "pending" && timeLeft > 0 && (
+										<div className="flex justify-center">
+											<span className="text-xs text-red-500 font-mono font-bold tracking-wider bg-red-500/10 border border-red-500/20 px-2.5 py-0.5 rounded-full">
+												{formatTime(timeLeft)}
+											</span>
+										</div>
+									)}
+									<div className="flex items-center justify-center gap-1.5 text-muted-foreground">
 										<Clock className="h-3.5 w-3.5 text-primary shrink-0" />
-										<p className="text-[10px] font-bold uppercase tracking-widest leading-tight text-center">
-											Waiting for payment confirmation
+										<p className="text-[10px] font-bold uppercase tracking-widest">
+											Waiting for payment
 										</p>
 									</div>
 								</div>

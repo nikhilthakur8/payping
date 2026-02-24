@@ -42,6 +42,7 @@ export default function Providers() {
 
 	// Add form state
 	const [selectedProvider, setSelectedProvider] = useState("");
+	const [businessName, setBusinessName] = useState("");
 	const [merchantId, setMerchantId] = useState("");
 	const [vpa, setVpa] = useState("");
 	const [isDefault, setIsDefault] = useState(false);
@@ -79,6 +80,7 @@ export default function Providers() {
 		fetchAllProviders();
 		setShowAddForm(true);
 		setSelectedProvider("");
+		setBusinessName("");
 		setMerchantId("");
 		setVpa("");
 		setIsDefault(false);
@@ -88,6 +90,10 @@ export default function Providers() {
 		e.preventDefault();
 		if (!selectedProvider) {
 			toast.error("Please select a provider");
+			return;
+		}
+		if (!businessName || businessName.length < 1) {
+			toast.error("Business name is required");
 			return;
 		}
 		if (!merchantId || merchantId.length < 1) {
@@ -103,6 +109,7 @@ export default function Providers() {
 		try {
 			await API.post("/provider/", {
 				provider: selectedProvider,
+				businessName,
 				merchantId: merchantId || undefined,
 				vpa,
 				isDefault,
@@ -137,6 +144,7 @@ export default function Providers() {
 	}
 
 	function EditProviderForm({ account, onUpdated }) {
+		const [businessName, setBusinessName] = useState(account.businessName || "");
 		const [merchantId, setMerchantId] = useState(account.merchantId || "");
 		const [vpa, setVpa] = useState(account.vpa || "");
 		const [isDefault, setIsDefault] = useState(account.isDefault || false);
@@ -144,6 +152,10 @@ export default function Providers() {
 
 		async function handleEdit(e) {
 			e.preventDefault();
+			if (!businessName || businessName.length < 1) {
+				toast.error("Business name is required");
+				return;
+			}
 			if (!merchantId || merchantId.length < 1) {
 				toast.error("Merchant ID is required");
 				return;
@@ -155,6 +167,7 @@ export default function Providers() {
 			setSaving(true);
 			try {
 				await API.put(`/provider/${account._id}`, {
+					businessName,
 					merchantId,
 					vpa,
 					isDefault,
@@ -179,6 +192,19 @@ export default function Providers() {
 						value={account.provider?.name || ""}
 						disabled
 						className="rounded-lg bg-muted/40 border-muted-foreground/20 text-foreground"
+					/>
+				</div>
+				<div className="space-y-2">
+					<Label htmlFor="editBusinessName" className="text-foreground/90 font-medium">
+						Business Name <span className="text-destructive">*</span>
+					</Label>
+					<Input
+						id="editBusinessName"
+						value={businessName}
+						onChange={(e) => setBusinessName(e.target.value)}
+						required
+						autoComplete="off"
+						className="rounded-lg border-muted-foreground/20 focus:border-primary transition-all"
 					/>
 				</div>
 				<div className="space-y-2">
@@ -311,6 +337,24 @@ export default function Providers() {
 							</div>
 
 							<div className="space-y-2">
+								<Label htmlFor="businessName" className="text-foreground/90 font-medium">
+									Business Name{" "}
+									<span className="text-destructive">*</span>
+								</Label>
+								<Input
+									id="businessName"
+									value={businessName}
+									onChange={(e) =>
+										setBusinessName(e.target.value)
+									}
+									placeholder="Your business name"
+									required
+									autoComplete="off"
+									className="rounded-lg border-muted-foreground/20 focus:border-primary transition-all"
+								/>
+							</div>
+
+							<div className="space-y-2">
 								<Label htmlFor="merchantId" className="text-foreground/90 font-medium">
 									Merchant ID{" "}
 									<span className="text-destructive">*</span>
@@ -422,8 +466,16 @@ export default function Providers() {
 							</CardHeader>
 							<CardContent className="space-y-3 pb-6">
 								<div className="space-y-1.5">
-									{account.merchantId && (
+									{account.businessName && (
 										<div className="flex flex-col">
+											<span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Business Name</span>
+											<span className="text-sm font-medium text-foreground/90 break-all">
+												{account.businessName}
+											</span>
+										</div>
+									)}
+									{account.merchantId && (
+										<div className="flex flex-col pt-1">
 											<span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Merchant ID</span>
 											<span className="text-sm font-mono font-medium text-foreground/90 break-all">
 												{account.merchantId}
