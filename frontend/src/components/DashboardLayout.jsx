@@ -7,6 +7,7 @@ import {
 	FileText,
 	Code,
 	LogOut,
+	Webhook,
 } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
@@ -44,8 +45,9 @@ export default function DashboardLayout() {
 					{[
 						{ to: "/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
 						{ to: "/dashboard/providers", label: "Providers", icon: Wallet },
-						{ to: "/dashboard/orders", label: "Orders", icon: ShoppingCart },
-						{ to: "/dashboard/api-docs", label: "API Reference", icon: FileText },
+					{ to: "/dashboard/orders", label: "Orders", icon: ShoppingCart },
+					{ to: "/dashboard/webhooks", label: "Webhooks", icon: Webhook },
+					{ to: "/dashboard/api-docs", label: "API Reference", icon: FileText },
 						{ to: "/dashboard/developer", label: "Developer", icon: Code },
 						{ to: "/dashboard/settings", label: "Settings", icon: Settings },
 					].map(({ to, label, icon: Icon, end }) => (

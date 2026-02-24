@@ -10,6 +10,7 @@ const PaymentOrders = lazy(() => import("./pages/PaymentOrders"));
 const DashboardSettings = lazy(() => import("./pages/DashboardSettings"));
 const Developer = lazy(() => import("./pages/Developer"));
 const ApiDocs = lazy(() => import("./pages/ApiDocs"));
+const WebhookLogs = lazy(() => import("./pages/WebhookLogs"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const VerifyOTP = lazy(() => import("./pages/VerifyOTP"));
@@ -65,11 +66,12 @@ const router = createBrowserRouter([
 									{ path: "providers", element: <Providers /> },
 									{ path: "orders", element: <PaymentOrders /> },
 									{ path: "api-docs", element: <ApiDocs /> },
-									{ path: "developer", element: <Developer /> },
-									{
-										path: "settings",
-										element: <DashboardSettings />,
-									},
+								{ path: "webhooks", element: <WebhookLogs /> },
+								{ path: "developer", element: <Developer /> },
+								{
+									path: "settings",
+									element: <DashboardSettings />,
+								},
 								],
 							},
 						],
