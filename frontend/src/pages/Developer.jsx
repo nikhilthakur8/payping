@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Copy, RefreshCw, Key, Loader2, AlertTriangle, Save, Globe } from "lucide-react";
+import { Copy, RefreshCw, Key, Loader2, AlertTriangle, Save, Globe, Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export default function Developer() {
@@ -16,6 +16,8 @@ export default function Developer() {
 	const [confirmType, setConfirmType] = useState(null); // 'api' or 'webhook'
 	const [callbackUrl, setCallbackUrl] = useState("");
 	const [savingCallback, setSavingCallback] = useState(false);
+	const [showApiKey, setShowApiKey] = useState(false);
+	const [showWebhookSecret, setShowWebhookSecret] = useState(false);
 
 	const fetchDetailedProfile = async () => {
 		try {
@@ -147,11 +149,21 @@ export default function Developer() {
 								</Button>
 							</div>
 							<div className="flex gap-2">
-								<Input 
-									readOnly 
-									value={user?.apiKey || ""} 
-									className="font-mono text-xs bg-muted/30 border-muted-foreground/20"
-								/>
+								<div className="relative flex-1">
+									<Input 
+										readOnly 
+										type={showApiKey ? "text" : "password"}
+										value={user?.apiKey || ""} 
+										className="font-mono text-xs bg-muted/30 border-muted-foreground/20 pr-10"
+									/>
+									<button
+										type="button"
+										onClick={() => setShowApiKey(prev => !prev)}
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+									>
+										{showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+									</button>
+								</div>
 								<Button 
 									variant="outline" 
 									size="icon" 
@@ -179,11 +191,21 @@ export default function Developer() {
 								</Button>
 							</div>
 							<div className="flex gap-2">
-								<Input 
-									readOnly 
-									value={user?.webhookSecret || ""} 
-									className="font-mono text-xs bg-muted/30 border-muted-foreground/20"
-								/>
+								<div className="relative flex-1">
+									<Input 
+										readOnly 
+										type={showWebhookSecret ? "text" : "password"}
+										value={user?.webhookSecret || ""} 
+										className="font-mono text-xs bg-muted/30 border-muted-foreground/20 pr-10"
+									/>
+									<button
+										type="button"
+										onClick={() => setShowWebhookSecret(prev => !prev)}
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+									>
+										{showWebhookSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+									</button>
+								</div>
 								<Button 
 									variant="outline" 
 									size="icon" 
