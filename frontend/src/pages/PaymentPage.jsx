@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import API from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, AlertCircle, Clock, Copy, ExternalLink, ShieldCheck, Share2, Download } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function PaymentPage() {
 	const { internalRef } = useParams();
 	const [order, setOrder] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [status, setStatus] = useState("pending"); // pending, success, failed
+	const qrRef = useRef(null);
 
 	const [timeLeft, setTimeLeft] = useState(0);
 
@@ -92,19 +94,20 @@ export default function PaymentPage() {
 		}
 	}, [status, order]);
 
-	const downloadQR = async () => {
+	const downloadQR = () => {
 		try {
-			const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(order.qrPayload)}`;
-			const response = await fetch(qrUrl);
-			const blob = await response.blob();
-			const url = window.URL.createObjectURL(blob);
+			const canvas = qrRef.current?.querySelector('canvas');
+			if (!canvas) {
+				toast.error("QR code not ready");
+				return;
+			}
+			const url = canvas.toDataURL('image/png');
 			const link = document.createElement('a');
 			link.href = url;
 			link.download = `payment-qr-${internalRef}.png`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
-			window.URL.revokeObjectURL(url);
 		} catch (error) {
 			toast.error("Failed to download QR code");
 		}
@@ -254,11 +257,12 @@ export default function PaymentPage() {
 							<CardContent className="space-y-4 pt-0">
 								{/* QR Code Section */}
 								<div className="flex flex-col items-center gap-4">
-									<div className="relative w-44 h-44 bg-white p-2 rounded-xl group">
-										<img 
-											src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(order.qrPayload)}`}
-											alt="UPI QR Code"
-											className="w-full h-full"
+									<div ref={qrRef} className="relative w-44 h-44 bg-white p-2 rounded-xl group flex items-center justify-center">
+										<QRCodeCanvas
+											value={order.qrPayload}
+											size={160}
+											level="H"
+											includeMargin={false}
 										/>
 									</div>
 									
