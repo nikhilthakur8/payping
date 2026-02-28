@@ -96,24 +96,41 @@ export const sendWebhook = async (order) => {
 		// 3. Generate Signature
 		const signature = generateSignature(payload, user.webhookSecret);
 
-		// 4. Create Initial Log
+		// 4. Create Initial Log atomically to prevent duplicates
 		let log;
 		try {
-			log = await CallbackLog.create({
-				user: user._id,
-				order: order._id,
-				url: user.callbackUrl,
-				payload,
-				status: "pending",
-			});
+			const result = await CallbackLog.updateOne(
+				{ order: order._id, "payload.status": payload.status },
+				{
+					$setOnInsert: {
+						user: user._id,
+						order: order._id,
+						url: user.callbackUrl,
+							payload,
+							status: "pending",
+						}
+				},
+				{ upsert: true }
+			);
+
+			// If it wasn't upserted, it already existed (another thread beat us to it)
+			if (result.upsertedCount === 0) {
+				console.log(`[Webhook] Duplicate webhook for order ${order.clientRef || order._id} status ${payload.status} suppressed.`);
+				return;
+			}
+
+			// Fetch the newly upserted log document for further processing
+			log = await CallbackLog.findById(result.upsertedId);
 		} catch (dbError) {
 			console.error("Failed to create webhook log:", dbError);
 			return;
 		}
 
 		// 5. Execute Request
-		await processWebhookLog(log, user.callbackUrl, payload, signature);
-		return log;
+		if (log) {
+			await processWebhookLog(log, user.callbackUrl, payload, signature);
+			return log;
+		}
 	} catch (error) {
 		console.error("Webhook Setup Failed:", error);
 	}
